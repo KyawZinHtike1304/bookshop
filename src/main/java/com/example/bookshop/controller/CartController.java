@@ -1,5 +1,6 @@
 package com.example.bookshop.controller;
 
+import com.example.bookshop.dto.CartItem;
 import com.example.bookshop.entity.Book;
 import com.example.bookshop.entity.BookId;
 import com.example.bookshop.service.BookService;
@@ -8,8 +9,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -19,11 +25,44 @@ public class CartController {
     private final CartService cartService;
     private final BookService bookService;
 
+
+    @GetMapping("/clear-cart")
+    public String clearCart(){
+        cartService.clearCart();
+        return "redirect:/cart/view-cart";
+    }
+
+    @PostMapping("/checkout")
+    public String checkout(CartItem cartItem){
+//        cartItem.getCartItemQuantity().forEach(System.out::println);
+        if (cartItem.getCartItemQuantity().size() == 0){
+            for (CartItem item : cartService.getCartItem()){
+                cartItem.getCartItemQuantity().add(1);
+            }
+//             cartService.getCartItem()
+//                    .stream()
+//                    .map(c -> c.getCartItemQuantity().get(1))
+//                    .collect(Collectors.toSet());
+        }
+        int i = 0;
+        for(CartItem item : cartService.getCartItem()){
+            if (cartItem.getCartItemQuantity().get(i) == null){
+                item.setQuantity(1);
+            }else {
+                item.setQuantity(cartItem.getCartItemQuantity().get(i));
+            }
+            i++;
+        }
+        cartService.getCartItem().forEach(System.out::println);
+        return "redirect:/cart/view-cart";
+    }
+
     //cart/view-cart
     @GetMapping("/view-cart")
     public String viewCart(Model model) {
-        model.addAttribute("cartItems",
-                cartService.getCartItem());
+
+        model.addAttribute("cartItems", cartService.getCartItem());
+        model.addAttribute("cartItem",new CartItem());
         return "viewcart";
     }
 
