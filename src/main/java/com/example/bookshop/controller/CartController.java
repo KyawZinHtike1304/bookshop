@@ -54,7 +54,7 @@ public class CartController {
             i++;
         }
         cartService.getCartItem().forEach(System.out::println);
-        return "redirect:/auth/register";
+        return "redirect:/register";
     }
 
     //cart/view-cart

@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html th:fragment="layout(main)" lang="en" xmlns:th="http://www.thymeleaf.org">
+<html th:fragment="layout(main)" lang="en" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -12,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css?family=Questrial" rel="stylesheet">
     <link rel="stylesheet" href="css/app.css">
 </head>
+
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark text-white">
@@ -41,6 +44,16 @@
                 <a href="#" class="nav-link">Book</a>
             </li>
         </ul>
+        <div sec:authorize="!isAuthenticated()">
+            <a th:href="@{/auth/login}" class="me-2">Login</a>
+        </div>
+        <div sec:authorize="isAuthenticated()">
+            <a href="#" class="me-2">Our Library</a>
+            <a href="javascript: document.logoutForm.submit()">Logout</a>
+            <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+                <input type="submit" hidden value="Logout">
+            </form>
+        </div>
     </div>
 </nav>
 
