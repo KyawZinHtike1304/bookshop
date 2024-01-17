@@ -34,9 +34,13 @@ public class Book {
     private List<Genre> genres =
             new ArrayList<>();
 
-    @ManyToOne
-    private OrderItem orderItem;
+    @OneToMany(mappedBy = "book")
+    private List<OrderItem> orderItems = new ArrayList<>();
 
+    public void addOrderItem(OrderItem orderItem){
+        orderItem.setBook(this);
+        this.orderItems.add(orderItem);
+    }
 
     public void addGenres(Genre genre) {
         genre.getBooks().add(this);

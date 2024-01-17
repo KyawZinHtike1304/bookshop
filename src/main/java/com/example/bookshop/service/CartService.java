@@ -24,7 +24,7 @@ public class CartService {
     }
 
 
-    public Set<CartItem> getCartItem() {
+    public Set<CartItem> getCartItems() {
         return cartBean.getCartItems();
     }
 

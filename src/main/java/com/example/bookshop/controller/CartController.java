@@ -13,10 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/cart")
@@ -36,16 +32,12 @@ public class CartController {
     public String checkout(CartItem cartItem){
 //        cartItem.getCartItemQuantity().forEach(System.out::println);
         if (cartItem.getCartItemQuantity().size() == 0){
-            for (CartItem item : cartService.getCartItem()){
+            for (CartItem item : cartService.getCartItems()){
                 cartItem.getCartItemQuantity().add(1);
             }
-//             cartService.getCartItem()
-//                    .stream()
-//                    .map(c -> c.getCartItemQuantity().get(1))
-//                    .collect(Collectors.toSet());
         }
         int i = 0;
-        for(CartItem item : cartService.getCartItem()){
+        for(CartItem item : cartService.getCartItems()){
             if (cartItem.getCartItemQuantity().get(i) == null){
                 item.setQuantity(1);
             }else {
@@ -53,7 +45,8 @@ public class CartController {
             }
             i++;
         }
-        cartService.getCartItem().forEach(System.out::println);
+        cartService.getCartItems().forEach(System.out::println);
+
         return "redirect:/register";
     }
 
@@ -61,7 +54,7 @@ public class CartController {
     @GetMapping("/view-cart")
     public String viewCart(Model model) {
 
-        model.addAttribute("cartItems", cartService.getCartItem());
+        model.addAttribute("cartItems", cartService.getCartItems());
         model.addAttribute("cartItem",new CartItem());
         return "viewcart";
     }

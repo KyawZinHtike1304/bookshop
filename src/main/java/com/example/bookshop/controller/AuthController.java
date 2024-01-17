@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDate;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -58,10 +57,8 @@ public class AuthController {
             return "register";
         }
 
-
-//        System.out.println("billing address" + billingAddress);
-//        System.out.println("Payment method"+ method);
         authService.register(customer,order);
+        customerService.saveCustomerOrderItems(customer);
         this.customer=customer;
         return "redirect:/info";
     }
@@ -70,11 +67,11 @@ public class AuthController {
 
     @GetMapping("/info")
     public ModelAndView checkInfo(ModelMap map, @ModelAttribute("totalPrice") double totalPrice){
-        map.put("cartItems",cartService.getCartItem());
+        map.put("cartItems",cartService.getCartItems());
         map.put("totalPrice",totalPrice);
 
         ModelAndView mv = new ModelAndView();
-        mv.addObject("cartItems",cartService.getCartItem());
+        mv.addObject("cartItems",cartService.getCartItems());
         mv.addObject("totalPrice",totalPrice);
         mv.addObject("customerInfo",
                 authService.findCustomerInfoByCustomerName(customer.getCustomerName()));
@@ -86,18 +83,12 @@ public class AuthController {
 //    auth//login
     @GetMapping("/login")
     public String login(){
-        if(Objects.isNull(customer)){
             return "login";
-        }else {
-            customerService.saveCustomerOrderItems(customer);
-            return "login";
-        }
-
     }
 
     @ModelAttribute("totalPrice")
     public double totalAmount(){
-        Optional<Double> optionalDouble = cartService.getCartItem()
+        Optional<Double> optionalDouble = cartService.getCartItems()
                 .stream()
                 .map(c -> c.getQuantity() * c.getPrice())
                 .reduce((a,b) -> a+b);
